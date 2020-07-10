@@ -13,8 +13,7 @@ type
     literal*: string
 
 # Forward declaration
-proc newToken*(kind: TokenKind, character: byte): Token =
-  return Token(kind: kind, literal: fmt"{character.byte.char}")
+proc newToken*(kind: TokenKind, character: byte): Token
 
 # Define the different kinds of tokens.
 const
@@ -50,3 +49,7 @@ const
   # Keywords
   FUNCTION* = "FUNCTION"
   LET* = "LET"
+ 
+# Return a new token object based on the token kind and value.
+proc newToken*(kind: TokenKind, character: byte): Token =
+  return Token(kind: kind, literal: fmt"{character.byte.char}")
