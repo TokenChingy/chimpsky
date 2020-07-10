@@ -1,9 +1,9 @@
-import
-    unittest,
-    ../src/token/token
+import unittest
+import ../src/lexer/lexer
+import ../src/token/token
 
-suite "Lexer Tests.":
-    test "It performs lexical analysis on a simple input.":
+suite "Lexer":
+    test "it analysis simple code":
         let input = "=+(){},;"
         let tests = @[
             (token.ASSIGN, "="),
@@ -13,7 +13,7 @@ suite "Lexer Tests.":
             (token.LBRACE, "{"),
             (token.RBRACE, "}"),
             (token.COMMA, ","),
-            (token.SEMICOLON, ";")
+            (token.SEMICOLON, ";"),
         ]
 
         var testLexer = lexer.newLexer(input)
@@ -21,5 +21,5 @@ suite "Lexer Tests.":
         for test in tests:
             let testToken = testLexer.nextToken()
 
-            check(test[0], testToken.Type)
-            check(test[1], testToken.Literal)
+            check(test[0] == testToken.Type)
+            check(test[1] == testToken.Literal)

@@ -1,7 +1,7 @@
 type
     TokenType* = string
 
-    Token* = ref object of RootObj
+    Token* = ref object
         Type*: TokenType
         Literal*: string
 
@@ -23,6 +23,11 @@ const
     RPAREN* = ")"
     LBRACE* = "{"
     RBRACE* = "}"
-    
+
     FUNCTION* = "FUNCTION"
     LET* = "LET"
+
+proc newToken*(tokenType: TokenType, character: char): Token
+
+proc newToken*(tokenType: TokenType, character: char): Token =
+    return Token(Type: tokenType, Literal: $character)
