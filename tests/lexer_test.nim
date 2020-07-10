@@ -2,7 +2,7 @@ import unittest
 import ../src/lexer/lexer
 import ../src/token/token
 
-suite "Test lexer":
+suite "Lexer":
     test "It should correctly analyse simple tokens":
         let input = "=+(){},;"
         let tests = @[
@@ -35,18 +35,18 @@ suite "Test lexer":
             
             let result = add(five, ten);
         """
-
         let tests = @[
             (token.LET, "let"),
             (token.IDENT, "five"),
             (token.ASSIGN, "="),
-            (token.INT, "10"),
+            (token.INT, "5"),
             (token.SEMICOLON, ";"),
 
             (token.LET, "let"),
             (token.IDENT, "ten"),
             (token.ASSIGN, "="),
             (token.INT, "10"),
+            (token.SEMICOLON, ";"),
 
             (token.LET, "let"),
             (token.IDENT, "add"),
@@ -74,7 +74,8 @@ suite "Test lexer":
             (token.COMMA, ","),
             (token.IDENT, "ten"),
             (token.RPAREN, ")"),
-            (token.SEMICOLON, ";")
+            (token.SEMICOLON, ";"),
+            (token.EOF, "\0")
         ]
 
         var testLexer = lexer.newLexer(input)

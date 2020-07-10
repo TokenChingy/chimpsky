@@ -1,4 +1,5 @@
 import ../token/token
+import ../utils/utils
 
 type
     Lexer* = ref object of RootObj
@@ -8,15 +9,26 @@ type
         character: char
 
 proc newLexer*(input: string): Lexer
-proc readNextCharacter(self: var Lexer) {.inline.}
+proc eatWhiteSpace(self: var Lexer)
+proc readNextCharacter(self: var Lexer)
+proc readIdentifier(self: var Lexer): string
+proc readNumber(self: var Lexer): string
 proc nextToken*(self: var Lexer): token.Token
 
 proc newLexer*(input: string): Lexer =
     new result
+
     result.input = input
     result.readNextCharacter()
 
-proc readNextCharacter(self: var Lexer) {.inline.} =
+    return result
+
+proc eatWhiteSpace(self: var Lexer) =
+    while self.character == ' ' or self.character == '\t' or self.character == '\n' or self.character == '\r':
+        self.readNextCharacter()
+
+
+proc readNextCharacter(self: var Lexer) =
     if self.nextPosition >= len(self.input):
         self.character = '\0'
     else:
@@ -25,8 +37,26 @@ proc readNextCharacter(self: var Lexer) {.inline.} =
     self.currentPosition = self.nextPosition
     self.nextPosition += 1
 
+proc readIdentifier(self: var Lexer): string =
+    let startPosition = self.currentPosition
+
+    while utils.isLetter(self.character):
+        self.readNextCharacter()
+
+    return self.input[startPosition..<self.currentPosition]
+
+proc readNumber(self: var Lexer): string =
+    let startPosition = self.currentPosition
+
+    while utils.isDigit(self.character):
+        self.readNextCharacter()
+
+    return self.input[startPosition..<self.currentPosition]
+
 proc nextToken*(self: var Lexer): token.Token =
     var resultingToken: token.Token
+
+    self.eatWhiteSpace()
 
     case self.character:
         of '=':
@@ -48,7 +78,17 @@ proc nextToken*(self: var Lexer): token.Token =
         of '\0':
             resultingToken =  token.newToken(token.EOF, self.character)
         else:
-            resultingToken = token.newToken(token.ILLEGAL, self.character)
+            if utils.isLetter(self.character):
+                let tokenLiteral = self.readIdentifier()
+                let tokenType = token.lookupKeyword(tokenLiteral)
+                
+                return token.Token(Type: tokenType, Literal: tokenLiteral)
+            elif utils.isDigit(self.character):
+                let tokenLiteral = self.readNumber()
+
+                return token.Token(Type: token.INT, Literal: tokenLiteral)
+
+            resultingToken = token.newToken(token.ILLEGAL, self.character)    
     
     self.readNextCharacter()
     

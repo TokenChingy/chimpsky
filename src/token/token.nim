@@ -1,3 +1,12 @@
+import tables
+
+type
+    TokenType* = string
+
+    Token* = ref object of RootObj
+        Type*: TokenType
+        Literal*: string
+
 const
     ILLEGAL* = "ILLEGAL"
     EOF* = "EOF"
@@ -20,16 +29,21 @@ const
     FUNCTION* = "FUNCTION"
     LET* = "LET"
 
-type
-    TokenType* = string
-
-    Token* = ref object of RootObj
-        Type*: TokenType
-        Literal*: string
-
-proc newToken*(tokenType: TokenType, character: char): Token {.inline.}
+var keywords = {
+    "fn": FUNCTION,
+    "let": LET,
+}.newTable()
 
 proc newToken*(tokenType: TokenType, character: char): Token {.inline.} =
     new result
+
     result.Type = tokenType
     result.Literal = $character
+
+    return result
+
+proc lookupKeyword*(identifier: string): TokenType =
+    if keywords.hasKey(identifier):
+        return keywords[identifier]
+
+    return IDENT
