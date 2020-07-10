@@ -1,10 +1,3 @@
-type
-    TokenType* = string
-
-    Token* = ref object
-        Type*: TokenType
-        Literal*: string
-
 const
     ILLEGAL* = "ILLEGAL"
     EOF* = "EOF"
@@ -27,7 +20,16 @@ const
     FUNCTION* = "FUNCTION"
     LET* = "LET"
 
-proc newToken*(tokenType: TokenType, character: char): Token
+type
+    TokenType* = string
 
-proc newToken*(tokenType: TokenType, character: char): Token =
-    return Token(Type: tokenType, Literal: $character)
+    Token* = ref object of RootObj
+        Type*: TokenType
+        Literal*: string
+
+proc newToken*(tokenType: TokenType, character: char): Token {.inline.}
+
+proc newToken*(tokenType: TokenType, character: char): Token {.inline.} =
+    new result
+    result.Type = tokenType
+    result.Literal = $character

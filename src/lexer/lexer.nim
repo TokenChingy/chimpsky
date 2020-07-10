@@ -1,24 +1,22 @@
 import ../token/token
 
 type
-    Lexer* = ref object
+    Lexer* = ref object of RootObj
         input: string
         currentPosition: int
         nextPosition: int
         character: char
 
 proc newLexer*(input: string): Lexer
-proc readNextCharacter(self: var Lexer)
+proc readNextCharacter(self: var Lexer) {.inline.}
 proc nextToken*(self: var Lexer): token.Token
 
 proc newLexer*(input: string): Lexer =
-    var lexer = Lexer(input: input, currentPosition: 0, nextPosition: 0, character: '\0')
+    new result
+    result.input = input
+    result.readNextCharacter()
 
-    lexer.readNextCharacter()
-
-    return lexer
-
-proc readNextCharacter(self: var Lexer) =
+proc readNextCharacter(self: var Lexer) {.inline.} =
     if self.nextPosition >= len(self.input):
         self.character = '\0'
     else:
@@ -33,6 +31,8 @@ proc nextToken*(self: var Lexer): token.Token =
     case self.character:
         of '=':
             resultingToken = token.newToken(token.ASSIGN, self.character)
+        of '+':
+            resultingToken = token.newToken(token.PLUS, self.character)
         of ',':
             resultingToken = token.newToken(token.COMMA, self.character)
         of ';':
@@ -46,10 +46,9 @@ proc nextToken*(self: var Lexer): token.Token =
         of '}':
             resultingToken = token.newToken(token.RBRACE, self.character)
         of '\0':
-            resultingToken.Type = token.EOF
-            resultingToken.Literal = ""
+            resultingToken =  token.newToken(token.EOF, self.character)
         else:
-            discard
+            resultingToken = token.newToken(token.ILLEGAL, self.character)
     
     self.readNextCharacter()
     
