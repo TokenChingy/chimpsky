@@ -1,4 +1,3 @@
-import strformat
 import ../lexer/lexer
 import ../token/token
 
@@ -15,5 +14,5 @@ proc repl*() =
     var readToken = replLexer.nextToken()
 
     while readToken.Type != token.EOF:
-      echo(fmt"(Type: {$readToken.Type}, Literal: {$readToken.Literal})")
+      echo("{ Type: " & $readToken.Type & " Literal: " & $readToken.Literal & " }")
       readToken = replLexer.nextToken()
