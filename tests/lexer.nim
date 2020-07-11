@@ -2,7 +2,7 @@ import unittest
 import ../src/lexer/lexer
 import ../src/token/token
 
-proc test*() {.inline.} =
+proc test*() =
     suite "Lexer":
         test "It should correctly analyse simple tokens":
             let input = "=+(){},;"
@@ -17,7 +17,7 @@ proc test*() {.inline.} =
                 (token.SEMICOLON, ";"),
             ]
 
-            var testLexer = lexer.newLexer(input)
+            var testLexer = lexer.create(input)
 
             for test in tests:
                 let testToken = testLexer.nextToken()
@@ -79,7 +79,7 @@ proc test*() {.inline.} =
                 (token.EOF, "\0")
             ]
 
-            var testLexer = lexer.newLexer(input)
+            var testLexer = lexer.create(input)
 
             for test in tests:
                 let testToken = testLexer.nextToken()
@@ -108,7 +108,7 @@ proc test*() {.inline.} =
                 (token.SEMICOLON, ";"),
             ]
 
-            var testLexer = lexer.newLexer(input)
+            var testLexer = lexer.create(input)
 
             for test in tests:
                 let testToken = testLexer.nextToken()
@@ -144,7 +144,7 @@ proc test*() {.inline.} =
                 (token.RBRACE, "}"),
             ]
 
-            var testLexer = lexer.newLexer(input)
+            var testLexer = lexer.create(input)
 
             for test in tests:
                 let testToken = testLexer.nextToken()
@@ -168,7 +168,7 @@ proc test*() {.inline.} =
                 (token.SEMICOLON, ";"),
             ]
 
-            var testLexer = lexer.newLexer(input)
+            var testLexer = lexer.create(input)
 
             for test in tests:
                 let testToken = testLexer.nextToken()

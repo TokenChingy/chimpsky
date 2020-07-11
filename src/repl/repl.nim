@@ -8,11 +8,11 @@ proc repl*() =
   while true:
     stdout.write(PROMPT)
     
-    let line = stdin.readLine()
+    let line: string = stdin.readLine()
     
-    var replLexer = lexer.newLexer(line)
-    var readToken = replLexer.nextToken()
+    var replLexer = lexer.create(line)
+    var tokenRead = replLexer.nextToken()
 
-    while readToken.Type != token.EOF:
-      echo("{ Type: " & $readToken.Type & " Literal: " & $readToken.Literal & " }")
-      readToken = replLexer.nextToken()
+    while tokenRead.Type != token.EOF:
+      echo("{ Type: " & $tokenRead.Type & " Literal: " & $tokenRead.Literal & " }")
+      tokenRead = replLexer.nextToken()

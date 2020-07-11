@@ -1,3 +1,5 @@
+{.experimental: "codeReordering".}
+
 import ../token/token
 import ../utils/utils
 
@@ -8,17 +10,9 @@ type
         nextPosition: int
         character: char
 
-proc newLexer*(input: string): Lexer
-proc eatWhiteSpace(self: var Lexer) {.inline.}
-proc readNextCharacter(self: var Lexer) {.inline.}
-proc peekNextCharacter(self: var Lexer): char
-proc readIdentifier(self: var Lexer): string
-proc readNumber(self: var Lexer): string
-proc nextToken*(self: var Lexer): token.Token
-
-proc newLexer*(input: string): Lexer =
+proc create*(input: string): Lexer =
     new result
-
+    
     result.input = input
     result.readNextCharacter()
 
@@ -69,56 +63,56 @@ proc nextToken*(self: var Lexer): token.Token =
                 let initialCharacter = self.character
 
                 self.readNextCharacter()
-                resultingToken = Token(Type: token.EQ, Literal: initialCharacter & self.character);
+                resultingToken = token.create(token.EQ, initialCharacter & self.character);
             else:
-                resultingToken = token.newToken(token.ASSIGN, self.character)
+                resultingToken = token.create(token.ASSIGN, self.character)
         of '+':
-            resultingToken = token.newToken(token.PLUS, self.character)
+            resultingToken = token.create(token.PLUS, self.character)
         of '-':
-            resultingToken = token.newToken(token.MINUS, self.character)
+            resultingToken = token.create(token.MINUS, self.character)
         of '*':
-            resultingToken = token.newToken(token.ASTERIK, self.character)
+            resultingToken = token.create(token.ASTERIK, self.character)
         of '/':
-            resultingToken = token.newToken(token.SLASH, self.character)
+            resultingToken = token.create(token.SLASH, self.character)
         of '!':
             if (self.peekNextCharacter() == '='):
                 let initialCharacter = self.character
 
                 self.readNextCharacter()
-                resultingToken = Token(Type: token.NOT_EQ, Literal: initialCharacter & self.character)
+                resultingToken = token.create(token.NOT_EQ, initialCharacter & self.character)
             else:
-                resultingToken = token.newToken(token.BANG, self.character)
+                resultingToken = token.create(token.BANG, self.character)
         of '<':
-            resultingToken = token.newToken(token.LT, self.character)
+            resultingToken = token.create(token.LT, self.character)
         of '>':
-            resultingToken = token.newToken(token.GT, self.character)
+            resultingToken = token.create(token.GT, self.character)
         of ',':
-            resultingToken = token.newToken(token.COMMA, self.character)
+            resultingToken = token.create(token.COMMA, self.character)
         of ';':
-            resultingToken = token.newToken(token.SEMICOLON, self.character)
+            resultingToken = token.create(token.SEMICOLON, self.character)
         of '(':
-            resultingToken = token.newToken(token.LPAREN, self.character)
+            resultingToken = token.create(token.LPAREN, self.character)
         of ')':
-            resultingToken = token.newToken(token.RPAREN, self.character)
+            resultingToken = token.create(token.RPAREN, self.character)
         of '{':
-            resultingToken = token.newToken(token.LBRACE, self.character)
+            resultingToken = token.create(token.LBRACE, self.character)
         of '}':
-            resultingToken = token.newToken(token.RBRACE, self.character)
+            resultingToken = token.create(token.RBRACE, self.character)
         of '\0':
-            resultingToken =  token.newToken(token.EOF, self.character)
+            resultingToken = token.create(token.EOF, self.character)
         else:
             if utils.isLetter(self.character):
                 let tokenLiteral = self.readIdentifier()
                 let tokenType = token.lookupKeyword(tokenLiteral)
                 
-                return token.Token(Type: tokenType, Literal: tokenLiteral)
+                return token.create(tokenType, tokenLiteral)
             elif utils.isDigit(self.character):
                 let tokenLiteral = self.readNumber()
 
-                return token.Token(Type: token.INT, Literal: tokenLiteral)
+                return token.create(token.INT, tokenLiteral)
 
-            resultingToken = token.newToken(token.ILLEGAL, self.character)    
+            resultingToken = token.create(token.ILLEGAL, self.character)
     
     self.readNextCharacter()
-    
+
     return resultingToken
