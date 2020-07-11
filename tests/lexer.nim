@@ -92,7 +92,6 @@ proc test*() {.inline.} =
                 !-/*5;
                 5 < 10 > 5;
             """
-
             let tests = @[
                 (token.BANG, "!"),
                 (token.MINUS, "-"),
@@ -106,6 +105,66 @@ proc test*() {.inline.} =
                 (token.INT, "10"),
                 (token.GT, ">"),
                 (token.INT, "5"),
+                (token.SEMICOLON, ";"),
+            ]
+
+            var testLexer = lexer.newLexer(input)
+
+            for test in tests:
+                let testToken = testLexer.nextToken()
+
+                check(test[0] == testToken.Type)
+                check(test[1] == testToken.Literal)
+
+        test "It should correctly analyse conditional and return keywords":
+            let input = """
+                if (5 < 10) {
+                    return true;
+                } else {
+                    return false;
+                }
+            """
+            let tests = @[
+                (token.IF, "if"),
+                (token.LPAREN, "("),
+                (token.INT, "5"),
+                (token.LT, "<"),
+                (token.INT, "10"),
+                (token.RPAREN, ")"),
+                (token.LBRACE, "{"),
+                (token.RETURN, "return"),
+                (token.TRUE, "true"),
+                (token.SEMICOLON, ";"),
+                (token.RBRACE, "}"),
+                (token.ELSE, "else"),
+                (token.LBRACE, "{"),
+                (token.RETURN, "return"),
+                (token.FALSE, "false"),
+                (token.SEMICOLON, ";"),
+                (token.RBRACE, "}"),
+            ]
+
+            var testLexer = lexer.newLexer(input)
+
+            for test in tests:
+                let testToken = testLexer.nextToken()
+
+                check(test[0] == testToken.Type)
+                check(test[1] == testToken.Literal)
+
+        test "It should correctly analyse comparators":
+            let input = """
+                10 == 10;
+                10 != 9;
+            """
+            let tests = @[
+                (token.INT, "10"),
+                (token.EQ, "=="),
+                (token.INT, "10"),
+                (token.SEMICOLON, ";"),
+                (token.INT, "10"),
+                (token.NOT_EQ, "!="),
+                (token.INT, "9"),
                 (token.SEMICOLON, ";"),
             ]
 

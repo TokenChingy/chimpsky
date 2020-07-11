@@ -11,6 +11,7 @@ type
 proc newLexer*(input: string): Lexer
 proc eatWhiteSpace(self: var Lexer) {.inline.}
 proc readNextCharacter(self: var Lexer) {.inline.}
+proc peekNextCharacter(self: var Lexer): char
 proc readIdentifier(self: var Lexer): string
 proc readNumber(self: var Lexer): string
 proc nextToken*(self: var Lexer): token.Token
@@ -33,6 +34,13 @@ proc readNextCharacter(self: var Lexer) =
 
     self.currentPosition = self.nextPosition
     self.nextPosition += 1
+
+proc peekNextCharacter(self: var Lexer): char =
+    if (self.nextPosition >= len(self.input)):
+        return '\0'
+    
+    return self.input[self.nextPosition]
+
 
 proc readIdentifier(self: var Lexer): string =
     let startPosition = self.currentPosition
@@ -57,7 +65,13 @@ proc nextToken*(self: var Lexer): token.Token =
 
     case self.character:
         of '=':
-            resultingToken = token.newToken(token.ASSIGN, self.character)
+            if (self.peekNextCharacter() == '='):
+                let initialCharacter = self.character
+
+                self.readNextCharacter()
+                resultingToken = Token(Type: token.EQ, Literal: initialCharacter & self.character);
+            else:
+                resultingToken = token.newToken(token.ASSIGN, self.character)
         of '+':
             resultingToken = token.newToken(token.PLUS, self.character)
         of '-':
@@ -67,7 +81,13 @@ proc nextToken*(self: var Lexer): token.Token =
         of '/':
             resultingToken = token.newToken(token.SLASH, self.character)
         of '!':
-            resultingToken = token.newToken(token.BANG, self.character)
+            if (self.peekNextCharacter() == '='):
+                let initialCharacter = self.character
+
+                self.readNextCharacter()
+                resultingToken = Token(Type: token.NOT_EQ, Literal: initialCharacter & self.character)
+            else:
+                resultingToken = token.newToken(token.BANG, self.character)
         of '<':
             resultingToken = token.newToken(token.LT, self.character)
         of '>':
