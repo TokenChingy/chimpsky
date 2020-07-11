@@ -16,11 +16,11 @@ proc create*(input: string): Lexer =
     result.input = input
     result.readNextCharacter()
 
-proc eatWhiteSpace(self: var Lexer) =
+proc eatWhiteSpace(self: Lexer) =
     while self.character == ' ' or self.character == '\t' or self.character == '\n' or self.character == '\r':
         self.readNextCharacter()
 
-proc readNextCharacter(self: var Lexer) =
+proc readNextCharacter(self: Lexer) =
     if self.nextPosition >= len(self.input):
         self.character = '\0'
     else:
@@ -29,14 +29,14 @@ proc readNextCharacter(self: var Lexer) =
     self.currentPosition = self.nextPosition
     self.nextPosition += 1
 
-proc peekNextCharacter(self: var Lexer): char =
+proc peekNextCharacter(self: Lexer): char =
     if (self.nextPosition >= len(self.input)):
         return '\0'
     
     return self.input[self.nextPosition]
 
 
-proc readIdentifier(self: var Lexer): string =
+proc readIdentifier(self: Lexer): string =
     let startPosition = self.currentPosition
 
     while utils.isLetter(self.character):
@@ -44,7 +44,7 @@ proc readIdentifier(self: var Lexer): string =
 
     return self.input[startPosition..<self.currentPosition]
 
-proc readNumber(self: var Lexer): string =
+proc readNumber(self: Lexer): string =
     let startPosition = self.currentPosition
 
     while utils.isDigit(self.character):
@@ -52,7 +52,7 @@ proc readNumber(self: var Lexer): string =
 
     return self.input[startPosition..<self.currentPosition]
 
-proc nextToken*(self: var Lexer): token.Token =
+proc getNextToken*(self: Lexer): token.Token =
     var resultingToken: token.Token
 
     self.eatWhiteSpace()

@@ -17,13 +17,13 @@ proc test*() =
                 (token.SEMICOLON, ";"),
             ]
 
-            var testLexer = lexer.create(input)
+            var tokenizer = lexer.create(input)
 
             for test in tests:
-                let testToken = testLexer.nextToken()
+                let currentToken = tokenizer.getNextToken()
 
-                check(test[0] == testToken.Type)
-                check(test[1] == testToken.Literal)
+                check(test[0] == currentToken.Type)
+                check(test[1] == currentToken.Literal)
 
         test "It should correctly analyse simple code":
             let input = """
@@ -79,13 +79,13 @@ proc test*() =
                 (token.EOF, "\0")
             ]
 
-            var testLexer = lexer.create(input)
+            var tokenizer = lexer.create(input)
 
             for test in tests:
-                let testToken = testLexer.nextToken()
+                let currentToken = tokenizer.getNextToken()
 
-                check(test[0] == testToken.Type)
-                check(test[1] == testToken.Literal)
+                check(test[0] == currentToken.Type)
+                check(test[1] == currentToken.Literal)
 
         test "It should correctly analyse mixed tokens":
             let input = """
@@ -108,13 +108,13 @@ proc test*() =
                 (token.SEMICOLON, ";"),
             ]
 
-            var testLexer = lexer.create(input)
+            var tokenizer = lexer.create(input)
 
             for test in tests:
-                let testToken = testLexer.nextToken()
+                let currentToken = tokenizer.getNextToken()
 
-                check(test[0] == testToken.Type)
-                check(test[1] == testToken.Literal)
+                check(test[0] == currentToken.Type)
+                check(test[1] == currentToken.Literal)
 
         test "It should correctly analyse conditional and return keywords":
             let input = """
@@ -144,13 +144,13 @@ proc test*() =
                 (token.RBRACE, "}"),
             ]
 
-            var testLexer = lexer.create(input)
+            var tokenizer = lexer.create(input)
 
             for test in tests:
-                let testToken = testLexer.nextToken()
+                let currentToken = tokenizer.getNextToken()
 
-                check(test[0] == testToken.Type)
-                check(test[1] == testToken.Literal)
+                check(test[0] == currentToken.Type)
+                check(test[1] == currentToken.Literal)
 
         test "It should correctly analyse comparators":
             let input = """
@@ -168,10 +168,10 @@ proc test*() =
                 (token.SEMICOLON, ";"),
             ]
 
-            var testLexer = lexer.create(input)
+            var tokenizer = lexer.create(input)
 
             for test in tests:
-                let testToken = testLexer.nextToken()
+                let currentToken = tokenizer.getNextToken()
 
-                check(test[0] == testToken.Type)
-                check(test[1] == testToken.Literal)
+                check(test[0] == currentToken.Type)
+                check(test[1] == currentToken.Literal)
