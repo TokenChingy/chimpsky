@@ -9,8 +9,8 @@ type
         character: char
 
 proc newLexer*(input: string): Lexer
-proc eatWhiteSpace(self: var Lexer)
-proc readNextCharacter(self: var Lexer)
+proc eatWhiteSpace(self: var Lexer) {.inline.}
+proc readNextCharacter(self: var Lexer) {.inline.}
 proc readIdentifier(self: var Lexer): string
 proc readNumber(self: var Lexer): string
 proc nextToken*(self: var Lexer): token.Token
@@ -21,12 +21,9 @@ proc newLexer*(input: string): Lexer =
     result.input = input
     result.readNextCharacter()
 
-    return result
-
 proc eatWhiteSpace(self: var Lexer) =
     while self.character == ' ' or self.character == '\t' or self.character == '\n' or self.character == '\r':
         self.readNextCharacter()
-
 
 proc readNextCharacter(self: var Lexer) =
     if self.nextPosition >= len(self.input):
@@ -63,6 +60,18 @@ proc nextToken*(self: var Lexer): token.Token =
             resultingToken = token.newToken(token.ASSIGN, self.character)
         of '+':
             resultingToken = token.newToken(token.PLUS, self.character)
+        of '-':
+            resultingToken = token.newToken(token.MINUS, self.character)
+        of '*':
+            resultingToken = token.newToken(token.ASTERIK, self.character)
+        of '/':
+            resultingToken = token.newToken(token.SLASH, self.character)
+        of '!':
+            resultingToken = token.newToken(token.BANG, self.character)
+        of '<':
+            resultingToken = token.newToken(token.LT, self.character)
+        of '>':
+            resultingToken = token.newToken(token.GT, self.character)
         of ',':
             resultingToken = token.newToken(token.COMMA, self.character)
         of ';':

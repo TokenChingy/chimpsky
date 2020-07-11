@@ -17,6 +17,12 @@ const
 
     ASSIGN* = "="
     PLUS* = "+"
+    MINUS* = "-"
+    ASTERIK* = "*"
+    SLASH* = "/"
+    BANG* = "!"
+    LT* = "<"
+    GT* = ">"
 
     COMMA* = ","
     SEMICOLON* = ";"
@@ -39,8 +45,6 @@ proc newToken*(tokenType: TokenType, character: char): Token {.inline.} =
 
     result.Type = tokenType
     result.Literal = $character
-
-    return result
 
 proc lookupKeyword*(identifier: string): TokenType =
     if keywords.hasKey(identifier):
