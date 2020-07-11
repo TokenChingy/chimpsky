@@ -2,7 +2,7 @@ import unittest
 import ../src/lexer/lexer
 import ../src/token/token
 
-proc test*() =
+proc test*() {.inline.} =
     suite "Lexer":
         test "It should correctly analyse simple tokens":
             let input = "=+(){},;"
