@@ -36,7 +36,7 @@ const
 
 type
     TokenType* = string
-    
+
     Token* = ref object of RootObj
         Type*: TokenType
         Literal*: string
