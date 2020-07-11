@@ -1,2 +1,4 @@
+import repl/repl
+
 when isMainModule:
-  discard
+  repl()
