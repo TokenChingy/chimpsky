@@ -21,7 +21,7 @@ proc test*() {.inline.} =
         analyzer = parser.create(tokenizer)
         program = analyzer.parseProgram()
 
-      check(program != nil)
+      check(not isNil(program))
       check(len(program.statements) == 3)
       
       for i in 0..<len(program.statements):
