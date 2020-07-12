@@ -1,4 +1,5 @@
 import unittest
+import ../chimpsky/ast/ast
 import ../chimpsky/lexer/lexer
 import ../chimpsky/parser/parser
 
@@ -10,11 +11,11 @@ proc test*() {.inline.} =
         let y = 10;
         let foobar = 838383;
       """
-      let tests = @[
-        "x",
-        "y",
-        "foobar",
-      ]
+      # let tests = @[
+      #   "x",
+      #   "y",
+      #   "foobar",
+      # ]
 
       let
         tokenizer = lexer.create(input)
@@ -25,4 +26,8 @@ proc test*() {.inline.} =
       check(len(program.statements) == 3)
       
       for i in 0..<len(program.statements):
-        check(program.statements[i].getTokenLiteral() == tests[i])
+        let statement = program.statements[i]
+
+        echo statement.getTokenLiteral()
+
+        check(statement.getTokenLiteral() == "let")
