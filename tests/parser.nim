@@ -1,6 +1,6 @@
 import unittest
-import ../src/lexer/lexer
-import ../src/parser/parser
+import ../chimpsky/lexer/lexer
+import ../chimpsky/parser/parser
 
 proc test*() {.inline.} =
   suite "Parser":
