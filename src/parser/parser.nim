@@ -7,9 +7,9 @@ import ../token/token
 type
   Parser* = ref object of RootObj
     tokenizer: lexer.Lexer
+    errors: seq[string]
     currentToken: token.Token
     nextToken: token.Token
-    errors: seq[string]
 
 proc create*(tokenizer: lexer.Lexer): Parser =
   new result
@@ -55,6 +55,10 @@ proc parseProgram*(self: Parser): ast.Program =
     self.getNextToken()
 
   result.statements = statements
+
+proc parsePrefix(): ast.Expression = discard
+
+proc parseIndix(leftSide: ast.Expression): ast.Expression = discard
 
 proc parseStatement(self: Parser): ast.Statement =
   case self.currentToken.Type:
