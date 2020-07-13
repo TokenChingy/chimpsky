@@ -30,3 +30,30 @@ proc test*() {.inline.} =
 
         check(statement.getTokenLiteral() == "let")
         check(statement.Name.Value == test)
+
+    test "It should capture errors":
+      let input = """
+        let x 5;
+        let = 10;
+        let 838383;
+      """
+      let tests = @[
+        "expected next token to be = got INT instead",
+        "expected next token to be IDENT got = instead",
+        "expected next token to be IDENT got INT instead"
+      ]
+
+      let
+        tokenizer = lexer.create(input)
+        analyzer = parser.create(tokenizer)
+      
+      discard analyzer.parseProgram()
+
+      let errors = analyzer.getErrors()
+
+      check(len(errors) > 0)
+
+      for index, test in tests:
+        check(errors[index] == test)
+
+

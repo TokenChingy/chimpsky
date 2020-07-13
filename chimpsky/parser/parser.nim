@@ -9,6 +9,7 @@ type
     tokenizer: lexer.Lexer
     currentToken: token.Token
     nextToken: token.Token
+    errors: seq[string]
 
 proc create*(tokenizer: lexer.Lexer): Parser =
   new result
@@ -16,6 +17,12 @@ proc create*(tokenizer: lexer.Lexer): Parser =
   result.tokenizer = tokenizer
   result.getNextToken()
   result.getNextToken()
+
+proc getErrors*(self: Parser): seq[string] =
+  return self.errors
+
+proc addError(self: Parser, expectedToken: token.TokenType): void =
+  self.errors.add("expected next token to be " & expectedToken & " got " & self.nextToken.Type & " instead")
 
 proc getNextToken(self: Parser) =
   self.currentToken = self.nextToken
@@ -30,6 +37,8 @@ proc expectNextToken(self: Parser, expectedToken: token.TokenType): bool =
 
     return true
 
+  self.addError(expectedToken)
+  
   return false
 
 proc parseProgram*(self: Parser): ast.Program =
