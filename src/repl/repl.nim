@@ -11,8 +11,8 @@ proc repl*() =
     let line: string = stdin.readLine()
     
     var replLexer = lexer.create(line)
-    var tokenRead = replLexer.nextToken()
+    var tokenRead = replLexer.getNextToken()
 
     while tokenRead.Type != token.EOF:
       echo("{ Type: " & $tokenRead.Type & " Literal: " & $tokenRead.Literal & " }")
-      tokenRead = replLexer.nextToken()
+      tokenRead = replLexer.getNextToken()
