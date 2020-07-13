@@ -1,5 +1,6 @@
 {.experimental: "codeReordering".}
 
+import tables
 import ../ast/ast
 import ../lexer/lexer
 import ../token/token
@@ -10,11 +11,15 @@ type
     errors: seq[string]
     currentToken: token.Token
     nextToken: token.Token
+    prefixTokens: Table[token.TokenType, parsePrefix]
+    infixTokens: Table[token.TokenType, parseInfix]
 
 proc create*(tokenizer: lexer.Lexer): Parser =
   new result
   
   result.tokenizer = tokenizer
+  result.prefixTokens = initTable[token.TokenType, parsePrefix]()
+  result.infixTokens = initTable[token.TokenType, parseInfix]()
   result.getNextToken()
   result.getNextToken()
 
@@ -41,6 +46,12 @@ proc expectNextToken(self: Parser, expectedToken: token.TokenType): bool =
   
   return false
 
+proc registerPrefix(self: Parser, prefixToken: token.TokenType, prefixHandle: proc): void =
+  self.prefixTokens[prefixToken] = prefixHandle
+
+proc registerInfix(self: Parser, infixToken: token.TokenType, infixHandle: proc): void =
+  self.infixTokens[infixToken] = infixHandle
+
 proc parseProgram*(self: Parser): ast.Program =
   new result
 
@@ -58,7 +69,7 @@ proc parseProgram*(self: Parser): ast.Program =
 
 proc parsePrefix(): ast.Expression = discard
 
-proc parseIndix(leftSide: ast.Expression): ast.Expression = discard
+proc parseInfix(leftSide: ast.Expression): ast.Expression = discard
 
 proc parseStatement(self: Parser): ast.Statement =
   case self.currentToken.Type:

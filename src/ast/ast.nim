@@ -1,8 +1,15 @@
+{.experimental: "codeReordering".}
 
 import ../token/token
 
 type
+  ExpressionType* = enum
+    IdentifierExpression
+
   Expression* = ref object of RootObj
+    case Kind*: ExpressionType
+      of IdentifierExpression:
+        identifier*: Identifier
 
 proc getTokenLiteral*(self: Expression): void = discard
 

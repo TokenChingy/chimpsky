@@ -71,3 +71,14 @@ suite "Parser":
     check(len(errors) == 0)
     check(len(program.statements) == 3)
 
+  test "It should parse the identifier expression":
+    let input = "foobar;"
+
+    let
+      tokenizer = lexer.create(input)
+      analyzer = parser.create(tokenizer)
+      program = analyzer.parseProgram()
+      errors = analyzer.getErrors()
+
+    check(len(errors) == 0)
+    check(len(program.statements) == 1)
