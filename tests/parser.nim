@@ -11,11 +11,11 @@ proc test*() {.inline.} =
         let y = 10;
         let foobar = 838383;
       """
-      # let tests = @[
-      #   "x",
-      #   "y",
-      #   "foobar",
-      # ]
+      let tests = @[
+        "x",
+        "y",
+        "foobar",
+      ]
 
       let
         tokenizer = lexer.create(input)
@@ -25,9 +25,8 @@ proc test*() {.inline.} =
       check(not isNil(program))
       check(len(program.statements) == 3)
       
-      for i in 0..<len(program.statements):
-        let statement = program.statements[i]
-
-        echo statement.getTokenLiteral()
+      for index, test in tests:
+        let statement = program.statements[index]
 
         check(statement.getTokenLiteral() == "let")
+        check(statement.Name.Value == test)

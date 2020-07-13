@@ -50,14 +50,15 @@ proc parseProgram*(self: Parser): ast.Program =
 proc parseStatement(self: Parser): ast.Statement =
   case self.currentToken.Type:
     of token.LET:
-      return self.parseLetStatement()
+      return self.parseLetStatement(ast.LetStatement)
     else:
       return nil
 
-proc parseLetStatement(self: Parser): ast.LetStatement =
+proc parseLetStatement(self: Parser, kind: enum): ast.Statement =
   new result
 
   result.Token = self.currentToken
+  result.Kind = kind
 
   if not self.expectNextToken(token.IDENT):
     return nil

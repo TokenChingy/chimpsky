@@ -4,7 +4,7 @@ version       = "0.1.0"
 author        = "Jason Lei"
 description   = "Chimpsky is a Monkey programming language interpreter and compiler implemented in Nim."
 license       = "MIT"
-srcDir        = "src"
+srcDir        = "chimpsky"
 bin           = @["chimpsky"]
 
 
