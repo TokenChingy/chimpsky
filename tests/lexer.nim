@@ -2,7 +2,7 @@ import unittest
 import ../chimpsky/lexer/lexer
 import ../chimpsky/token/token
 
-proc test*() {.inline.} =
+proc test*(): void {.inline.} =
   suite "Lexer":
     test "It should correctly analyse simple tokens":
       let input = "=+(){},;"

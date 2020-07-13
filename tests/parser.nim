@@ -3,7 +3,7 @@ import ../chimpsky/ast/ast
 import ../chimpsky/lexer/lexer
 import ../chimpsky/parser/parser
 
-proc test*() {.inline.} =
+proc test*(): void {.inline.} =
   suite "Parser":
     test "It should parse the let statement":
       let input = """
