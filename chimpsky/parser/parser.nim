@@ -60,6 +60,8 @@ proc parseStatement(self: Parser): ast.Statement =
   case self.currentToken.Type:
     of token.LET:
       return self.parseLetStatement(ast.LetStatement)
+    of token.RETURN:
+      return self.parseReturnStatement(ast.ReturnStatement)
     else:
       return nil
 
@@ -79,3 +81,12 @@ proc parseLetStatement(self: Parser, kind: enum): ast.Statement =
 
   while self.currentToken.Type != token.SEMICOLON:
     self.getNextToken()
+
+proc parseReturnStatement(self: Parser, kind: enum): ast.Statement =
+  new result
+
+  result.Token = self.currentToken
+  self.getNextToken()
+
+  while self.currentToken.Type != token.SEMICOLON:
+    self.getNextToken();

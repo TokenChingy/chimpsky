@@ -56,4 +56,19 @@ proc test*() {.inline.} =
       for index, test in tests:
         check(errors[index] == test)
 
+    test "It should parse the return statement":
+      let input = """
+        return 5;
+        return 10;
+        return 993322;
+      """
+
+      let
+        tokenizer = lexer.create(input)
+        analyzer = parser.create(tokenizer)
+        program = analyzer.parseProgram()
+        errors = analyzer.getErrors()
+
+      check(len(errors) == 0)
+      check(len(program.statements) == 3)
 

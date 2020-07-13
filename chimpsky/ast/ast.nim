@@ -17,6 +17,7 @@ proc getTokenLiteral*(self: Identifier): string =
 type
   StatementType* = enum 
     LetStatement
+    ReturnStatement
     Nil
 
   Statement* = ref object of RootObj
@@ -26,6 +27,8 @@ type
       of LetStatement:
         Name*: Identifier
         Value*: string
+      of ReturnStatement:
+        ReturnValue*: Expression
       of Nil:
         nil
 
