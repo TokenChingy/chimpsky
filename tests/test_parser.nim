@@ -82,3 +82,7 @@ suite "Parser":
 
     check(len(errors) == 0)
     check(len(program.statements) == 1)
+    check(program.statements[0].Kind == ast.ExpressionStatement)
+    check(program.statements[0].Expression.Kind == ast.IdentifierExpression)
+    check(program.statements[0].Expression.Identifier.Value == "foobar")
+    check(program.statements[0].Expression.Identifier.getTokenLiteral() == "foobar")

@@ -9,7 +9,7 @@ type
   Expression* = ref object of RootObj
     case Kind*: ExpressionType
       of IdentifierExpression:
-        identifier*: Identifier
+        Identifier*: Identifier
 
 proc getTokenLiteral*(self: Expression): void = discard
 
