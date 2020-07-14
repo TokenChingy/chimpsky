@@ -6,7 +6,7 @@ type
   ExpressionType* = enum
     IdentifierExpression
 
-  Expression* = ref object of RootObj
+  Expression* = ref object of RootObj    
     case Kind*: ExpressionType
       of IdentifierExpression:
         Identifier*: Identifier

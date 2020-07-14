@@ -6,6 +6,17 @@ import ../lexer/lexer
 import ../token/token
 
 type
+  Precedence* = enum
+    _
+    LOWEST
+    EQUALS
+    LESSGREATER
+    SUM
+    PRODUCT
+    PREFIX
+    CALL
+
+type
   Parser* = ref object of RootObj
     tokenizer: lexer.Lexer
     errors: seq[string]
@@ -19,6 +30,7 @@ proc create*(tokenizer: lexer.Lexer): Parser =
   
   result.tokenizer = tokenizer
   result.prefixTokens = initTable[token.TokenType, parsePrefix]()
+  result.registerPrefix(token.IDENT, result.parseIdentifer)
   result.infixTokens = initTable[token.TokenType, parseInfix]()
   result.getNextToken()
   result.getNextToken()
@@ -46,10 +58,10 @@ proc expectNextToken(self: Parser, expectedToken: token.TokenType): bool =
   
   return false
 
-proc registerPrefix(self: Parser, prefixToken: token.TokenType, prefixHandle: proc): void =
+proc registerPrefix(self: Parser, prefixToken: token.TokenType, prefixHandle: proc(){.closure.}): void =
   self.prefixTokens[prefixToken] = prefixHandle
 
-proc registerInfix(self: Parser, infixToken: token.TokenType, infixHandle: proc): void =
+proc registerInfix(self: Parser, infixToken: token.TokenType, infixHandle: proc(){.closure.}): void =
   self.infixTokens[infixToken] = infixHandle
 
 proc parseProgram*(self: Parser): ast.Program =
@@ -78,7 +90,7 @@ proc parseStatement(self: Parser): ast.Statement =
     of token.RETURN:
       return self.parseReturnStatement(ast.ReturnStatement)
     else:
-      return nil
+      return self.parseExpressionStatement()
 
 proc parseLetStatement(self: Parser, kind: enum): ast.Statement =
   new result
@@ -105,3 +117,30 @@ proc parseReturnStatement(self: Parser, kind: enum): ast.Statement =
 
   while self.currentToken.Type != token.SEMICOLON:
     self.getNextToken();
+
+proc parseExpressionStatement(self: Parser): ast.Statement =
+  new result
+
+  result.Kind = ast.ExpressionStatement
+  result.Token = self.currentToken
+  result.Expression = self.parseExpression(ord(LOWEST))
+
+  if self.peekNextToken(token.SEMICOLON):
+    self.getNextToken()
+
+proc parseExpression(self: Parser, precedence: int): ast.Expression =
+  var prefix = self.prefixTokens[self.currentToken.Type]
+
+  if prefix == nil:
+    return nil
+
+  var leftExpression = prefix()
+
+  return leftExpression
+
+proc parseIdentifer(self: Parser): ast.Expression =
+  new result
+
+  result.Kind = ast.IdentifierExpression
+  result.Identifier.Token = self.currentToken
+  result.Identifier.Value = self.currentToken.Literal
