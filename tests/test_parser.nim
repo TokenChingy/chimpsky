@@ -71,7 +71,7 @@ suite "Parser":
     check(len(errors) == 0)
     check(len(program.statements) == 3)
 
-  test "It should parse the identifier expression":
+  test "It should parse identifier expressions":
     let input = "foobar;"
 
     let
@@ -86,3 +86,19 @@ suite "Parser":
     check(program.statements[0].Expression.Kind == ast.IdentifierExpression)
     check(program.statements[0].Expression.Identifier.Value == "foobar")
     check(program.statements[0].Expression.Identifier.getTokenLiteral() == "foobar")
+
+  test "It should parse integer literals":
+    let input = "5;"
+
+    let
+      tokenizer = lexer.create(input)
+      analyzer = parser.create(tokenizer)
+      program = analyzer.parseProgram()
+      errors = analyzer.getErrors()
+
+    check(len(errors) == 0)
+    check(len(program.statements) == 1)
+    check(program.statements[0].Kind == ast.ExpressionStatement)
+    check(program.statements[0].Expression.Kind == ast.IntegerLiteralExpression)
+    check(program.statements[0].Expression.IntegerLiteral.Value == 5)
+    check(program.statements[0].Expression.IntegerLiteral.getTokenLiteral() == "5")

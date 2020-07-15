@@ -5,11 +5,15 @@ import ../token/token
 type
   ExpressionType* = enum
     IdentifierExpression
+    IntegerLiteralExpression
 
-  Expression* = ref object of RootObj    
+  Expression* = ref object of RootObj
     case Kind*: ExpressionType
       of IdentifierExpression:
         Identifier*: Identifier
+      of IntegerLiteralExpression:
+        IntegerLiteral*: IntegerLiteral
+
 
 proc getTokenLiteral*(self: Expression): void = discard
 
@@ -23,6 +27,14 @@ proc getTokenLiteral*(self: Identifier): string =
 
 proc getString*(self: Identifier): string =
   return self.Value
+  
+type
+  IntegerLiteral* = ref object of RootObj
+    Token*: token.Token
+    Value*: int64
+
+proc getTokenLiteral*(self: IntegerLiteral): string =
+  return self.Token.Literal
 
 type
   StatementType* = enum 

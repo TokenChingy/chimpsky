@@ -1,5 +1,6 @@
 {.experimental: "codeReordering".}
 
+import strutils
 import tables
 import ../ast/ast
 import ../lexer/lexer
@@ -22,16 +23,15 @@ type
     errors: seq[string]
     currentToken: token.Token
     nextToken: token.Token
-    prefixTokens: Table[token.TokenType, parsePrefix]
-    infixTokens: Table[token.TokenType, parseInfix]
+    prefixParsers: Table[token.TokenType, proc(parser: Parser): ast.Expression]
+    infixParsers: Table[token.TokenType, proc(parser: Parser, leftSide: ast.Expression): ast.Expression]
 
 proc create*(tokenizer: lexer.Lexer): Parser =
   new result
   
   result.tokenizer = tokenizer
-  result.prefixTokens = initTable[token.TokenType, parsePrefix]()
-  result.registerPrefix(token.IDENT, result.parseIdentifer)
-  result.infixTokens = initTable[token.TokenType, parseInfix]()
+  result.prefixParsers[token.IDENT] = parseIdentifer
+  result.prefixParsers[token.INT] = parseIntegerLiteral
   result.getNextToken()
   result.getNextToken()
 
@@ -57,12 +57,6 @@ proc expectNextToken(self: Parser, expectedToken: token.TokenType): bool =
   self.addError(expectedToken)
   
   return false
-
-proc registerPrefix(self: Parser, prefixToken: token.TokenType, prefixHandle: proc(){.closure.}): void =
-  self.prefixTokens[prefixToken] = prefixHandle
-
-proc registerInfix(self: Parser, infixToken: token.TokenType, infixHandle: proc(){.closure.}): void =
-  self.infixTokens[infixToken] = infixHandle
 
 proc parseProgram*(self: Parser): ast.Program =
   new result
@@ -119,28 +113,37 @@ proc parseReturnStatement(self: Parser, kind: enum): ast.Statement =
     self.getNextToken();
 
 proc parseExpressionStatement(self: Parser): ast.Statement =
-  new result
+  var statement = ast.Statement(Kind: ast.ExpressionStatement)
 
-  result.Kind = ast.ExpressionStatement
-  result.Token = self.currentToken
-  result.Expression = self.parseExpression(ord(LOWEST))
+  statement.Token = self.currentToken
+  statement.Expression = self.parseExpression(ord(LOWEST))
 
   if self.peekNextToken(token.SEMICOLON):
     self.getNextToken()
 
+  return statement
+
 proc parseExpression(self: Parser, precedence: int): ast.Expression =
-  var prefix = self.prefixTokens[self.currentToken.Type]
-
-  if prefix == nil:
+  if not self.prefixParsers.hasKey(self.currentToken.Type):
     return nil
-
-  var leftExpression = prefix()
+  
+  var prefix = self.prefixParsers[self.currentToken.Type]
+  var leftExpression = self.prefix()
 
   return leftExpression
 
 proc parseIdentifer(self: Parser): ast.Expression =
-  new result
+  var statement = ast.Expression(Kind: ast.IdentifierExpression)
 
-  result.Kind = ast.IdentifierExpression
-  result.Identifier.Token = self.currentToken
-  result.Identifier.Value = self.currentToken.Literal
+  statement.Kind = ast.IdentifierExpression
+  statement.Identifier = ast.Identifier(Token: self.currentToken, Value: self.currentToken.Literal)
+
+  return statement
+
+proc parseIntegerLiteral(self: Parser): ast.Expression =
+  var statement = ast.Expression(Kind: ast.IntegerLiteralExpression)
+
+  statement.IntegerLiteral = ast.IntegerLiteral(Token: self.currentToken, Value: parseInt(self.currentToken.Literal))
+
+  return statement
+  
